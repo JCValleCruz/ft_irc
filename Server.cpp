@@ -1,0 +1,313 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/22 12:49:46 by jormoral          #+#    #+#             */
+/*   Updated: 2025/10/07 19:26:05 by jvalle-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Server.hpp"
+
+template <typename T> void printVector(T &array)
+{
+	typename T::iterator it = array.begin();
+	typename T::iterator ite = array.end();
+	int i = 0;
+	std::cout << GREEN <<"Printing Vector:" << std::endl;
+	while(it != ite)
+	{
+		std::cout << "[" << i << "]"<< (*it) << "\n";
+		it++;
+		i++;
+	}
+	std::cout << WHITE << std::endl;
+}
+
+
+Server::Server(int port, char *password){
+    this->port = port;
+    this->password = password;
+	
+    this->server_socket = initServerSocket();
+    this->server_address = initServerAddress(port);
+	
+    bind(this->server_socket, (struct sockaddr*)&server_address, sizeof(server_address));
+    listen(server_socket, 6);
+    initPolls();
+    initHostName();
+    printServer();
+}
+
+int Server::initServerSocket(){
+	//int servsocket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);-> Linux Only
+    int servsocket = socket(AF_INET, SOCK_STREAM, 0);
+    if(servsocket == -1)
+		errorPrint("Failed to create socket");
+    int one = 1;
+    setsockopt(servsocket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+    fcntl(servsocket, F_SETFL, O_NONBLOCK);
+	
+    return(servsocket);
+}
+
+sockaddr_in Server::initServerAddress(int port){
+    sockaddr_in address;
+	memset(&address, 0, sizeof(address));
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    //address.sin_addr.s_addr = INADDR_ANY;
+/* //this->ip_address = "10.11.5.4";
+	if(inet_pton(AF_INET, ip_address.c_str(), &address.sin_addr) <= 0)
+        errorPrint("Invalid IP address format"); */
+    return (address);
+}
+
+void Server::initPolls()
+{
+    struct pollfd paul;
+    paul.fd = this->server_socket;
+    paul.events = POLLIN;
+    paul.revents = 0;
+    this->polls.push_back(paul);
+}
+
+void Server::initHostName(){
+    char aux[1024];
+    if(gethostname(aux, 1024) == -1)
+        errorPrint("Unable to fetch hostname");
+    this->hostname = aux;
+}
+
+int Server::checkConnections(void) {
+    int result = poll(&this->polls[0], polls.size(), 0);
+    if (result == -1 && !g_signal) 
+		errorPrint("Error while trying to poll()");
+    return (result);
+}
+
+int Server::updateConnections()
+{
+	unsigned int i = 0;
+	while(i < this->polls.size())
+	{
+		if(this->polls[i].revents > 0)
+		{
+			if(this->polls[i].fd == this->server_socket)// if(i == 0)?? 0 es serverpoll
+				newClient();
+			else
+				manageClientMessage(this->clients[this->polls[i].fd]); // send the client
+		}
+		i++;
+	}
+
+	return(0);
+}
+
+void Server::manageClientMessage(Client &client)
+{
+	char buffer[1024];
+	memset(buffer, 0, sizeof(buffer));
+	ssize_t len = recv(client.getSocket(), buffer, sizeof(buffer) - 1, 0); // sizeof buffer - 1
+	if(len == -1)
+	{
+		std::cerr << "Recv error" << std::endl;
+		exit(1);
+	}
+	if(len == 0)
+	{
+		//std::cout << "Client on SOCKET[" << client.getSocket() <<"] DISCONNECTED" << std::endl;
+		//void Server::parseQuit(Client &client) EL QUIT YA HACE DISCONECT 
+		//aqui hay que quitar al compa de los grupos. usamos 
+		this->parseQuit(client);
+	}
+	//chequear si el buffer tiene algo antes 
+	//std::cout << PURPLE << buffer << WHITE << std::endl;
+	//std::cout << PURPLE << message << WHITE << std::endl;
+	//std::cout << "Salio de aqui" << std::endl;
+	std::string message(buffer);
+	if (len > 0)
+	{
+		if(count_char(message, '\n') >= 2)
+		{
+			std::vector<std::string> temp = ft_split(message, '\n', 0);
+			size_t i = 0;
+			while(i < temp.size())
+			{
+				client.setMessage(temp[i]);
+				parseMessage(client);
+				client.setMessage("");
+				i++;
+			}
+		}
+		else if(message.find("\n") != std::string::npos) // lo encuentra
+		{
+			client.setMessage(client.getMessage() + message);
+			parseMessage(client);
+			client.setMessage("");
+		}
+		else if(message.find("\n") == std::string::npos)
+		{
+			client.setMessage(client.getMessage() + message);
+			//std::cout << RED <<"mensaje cortado:\"" << client.getMessage() << "\"" << WHITE <<std::endl;
+			message = "";
+		}
+	}
+}
+
+void Server::parseMessage(Client &client)
+{
+	std::string message(client.getMessage());
+	//Convertir en funcion clean?
+	if(!message.empty() && message[message.size() - 1] == '\n')
+		message.erase(message.size() - 1);	
+	if(!message.empty() && message[message.size() - 1] == '\r')
+		message.erase(message.size() - 1);
+	if(message.size() == 0)
+		return;
+
+	client.setMessage(message);
+
+	client.setFullmsg(ft_split(message , ' ', ':'));
+	/* for(size_t i = 0; i < client.getFullmsg().size(); i++)				//esto no renta by jc
+	{
+		if(client.getFullmsg()[i] == "")
+		{
+			std::cerr << "NULL PARAMETER NOOOOOOO" << std::endl;
+			return;
+		}
+	} */
+	std::vector<std::string> fullmsg = client.getFullmsg();
+
+	printVector(client.getFullmsg());
+
+	std::string system_commands[5] = {"PASS", "NICK", "USER", "CAP", "QUIT"};
+	for(int i = 0; i < 5; i++)
+	{
+		if(fullmsg[0] == system_commands[i])
+		{
+			system_switch(i, client);
+			//this.map<clientes>.sendResponse.cliente->send(clientsocket(), char *);M
+			client.sendResponse();
+		}
+		if(client.getNick() != "" && client.getUsername() != "")
+			client.setHostname();
+	}
+	if(client.getUserVerified() == false)                 //MODE a secas? comprobar comandos con y sin arguments
+		return;                                                                                   //+limit +invite +topic +key +o=moderator y con el '-'
+	std::string user_commands[9] = {"JOIN", "KICK", "NICK", "PART", "PRIVMSG", "MODE", "TOPIC", "INVITE", "QUIT"};
+	for(int i = 0; i < 8; i++)                                                // TOPIC #canal? -> le dice el topic a la persona? de todos los canales?
+	{
+		if(fullmsg[0] == user_commands[i])
+		{
+			user_switch(i, client);
+			client.sendResponse();
+			return;
+		}
+	}
+}
+
+void Server::user_switch(int i, Client &client)
+{
+	switch(i)
+	{
+		case 0:
+			joinChannel(client);break;
+		case 1:
+			parseKick(client);break;
+		case 2:
+			parseChangeNick(client);break;
+		case 3:
+			parsePart(client);break;
+		case 4:
+			parsePrivmsg(client);break;
+		case 5:
+			parseMode(client);break;
+		case 6: 
+			parseTopic(client);break;
+		case 7:
+			parseInvite(client);break;
+	
+	}
+}
+
+void Server::system_switch(int i, Client &client)
+{
+	switch(i)
+	{
+		case 0:
+			parsePass(client);break;
+		case 1: if(client.getNick() == "" )parseNick(client);break;
+		case 2:
+			parseUser(client);break;
+		case 3:
+			parseCap(client);break;
+		case 4:
+			parseQuit(client);
+	}
+}
+
+/*void Server::parseUser(Client &client){
+}
+void Server::parseCap(Client &client){
+}
+void Server::parseQuit(Client &client){
+} */
+
+void Server::newClient()
+{
+	sockaddr_in address;
+	socklen_t address_size = sizeof(address);
+	int clisocket = accept(this->server_socket, (sockaddr*)&address, &address_size);
+	if(clisocket == -1)
+		errorPrint("Failed to create new Client Socket");
+	if(fcntl(clisocket, F_SETFL, O_NONBLOCK) == -1)
+		errorPrint("Failed to set new Client socket options");
+	Client createdClient(clisocket, address);
+	struct pollfd createdPoll;
+	createdPoll.fd = clisocket;
+	createdPoll.events = POLLIN;
+	createdPoll.revents = 0;
+	this->polls.push_back(createdPoll);
+	this->clients[clisocket] = createdClient;
+	std::cout << "Client socket " << clisocket << " connected."<< std::endl;
+	//rip henry & paul
+}
+
+void Server::disconnectClient(Client &clien){
+	Client client = clien;
+	for(std::vector<struct pollfd>::iterator it = this->polls.begin(); it != this->polls.end(); ++it)
+	{
+		if(client.getSocket() == (*it).fd)
+		{
+			this->polls.erase(it);
+			close(client.getSocket());
+			//this->clients.erase(client.getSocket());
+			break;
+		}
+	}
+
+	//std::cout << "Client on SOCKET[" << client.getSocket() <<"] DISCONNECTED" << std::endl;
+
+	//std::map<int, Client> auxmap = this->clients;
+	//std::cout << "Nodes in map " << this->clients.size() << std::endl;
+	//std::cout << "Nodes in vect " << this->polls.size() << std::endl;
+}
+
+std::string Server::gethostName(){
+	return(this->hostname);
+}
+
+
+void Server::notifyAll(std::string response){
+	response += "\n\r";
+	for(std::map<int, Client>::iterator  it = this->clients.begin(); it != this->clients.end(); it++)
+	{
+		send((*it).second.getSocket(), response.c_str(), response.length(), AF_INET);
+	}
+	std::cout << "server::Notify =" << response << std::endl;
+
+}

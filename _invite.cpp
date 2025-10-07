@@ -1,0 +1,38 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   _invite.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/22 12:47:02 by jormoral          #+#    #+#             */
+/*   Updated: 2025/09/22 12:47:05 by jormoral         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "Server.hpp"
+//INVITE target chan
+void	Server::parseInvite(Client &client)
+{
+    try
+    {
+        if(client.getFullmsg().size() != 3)
+            throw(ERR_NEEDMOREPARAMS);
+        if(!this->channelExists(client.getFullmsg()[2]))
+            throw(ERR_NOSUCHCHANNEL);
+        int channel_index = findChannelNumber(client.getFullmsg()[2]);
+        Channel &temp = this->channels[channel_index];
+        if(!temp.isInChannel(client.getNick()))
+            throw(ERR_NOTONCHANNEL);
+        if(temp.isInChannel(client.getFullmsg()[1]))
+            throw(ERR_USERONCHANNEL);
+		std::string response = client.getHostname() + " INVITE " + client.getFullmsg()[1] + " " + temp.getName();
+        temp.setResponse(response);
+        temp.sendResponseChannel(response, client, 0);
+		temp.invitedClients.push_back(client.getFullmsg()[1]);
+    }
+    catch(ERR num)
+    {
+        err(num, this->hostname, client);
+    }
+}

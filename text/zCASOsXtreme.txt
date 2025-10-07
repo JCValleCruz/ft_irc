@@ -1,0 +1,4 @@
+funcion del servidor que :
+antes de enviar cualquier mensaje, chequee que los clientes no tienen un buffer en message
+si, lo tienen añadir un salto de linea or retorno o arreglarlo como sea. para no cortar de forma tan fea
+(cuando jorge se une a #test , yo estaba escribiendo KICK y me corto el mesaje) 
