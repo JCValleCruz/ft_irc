@@ -26,12 +26,15 @@ void Server::parsePass(Client &client){
 		err(ERR_NEEDMOREPARAMS, this->hostname, client);
 		return;
 	}
-	else if(fullmsg[1] == this->password)
+	std::string passArg = fullmsg[1];
+	if (!passArg.empty() && passArg[0] == ':')
+		passArg = passArg.substr(1);
+	if(passArg == this->password)
 	{
 		std::cout << "Correct Password(" << client.getSocket() << ")" << std::endl;
 		client.setVerify(true);
 	}
-	else if(client.getRetries() > 0 && fullmsg[1] != this->password)
+	else if(client.getRetries() > 0)
 	{
 		err(ERR_PASSWDMISMATCH, this->hostname, client);
 		client.decreaseRetries();
@@ -40,7 +43,7 @@ void Server::parsePass(Client &client){
 			client.sendResponse();
 			client.setResponse("No more retries. Bye bye");client.sendResponse();
 			this->disconnectClient(client);
-		} 
+		}
 		return;
 	}		
 }

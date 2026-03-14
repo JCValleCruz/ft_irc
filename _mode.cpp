@@ -75,7 +75,7 @@ void Server::parseMode(Client &client)
                 while(commands[i])
                 {
                     if(commands.find_first_not_of("itklo", 1) != std::string::npos)
-                        throw(ERR_UNKNOWNCOMMAND);
+                        throw(ERR_UNKNOWNMODE);
                     if(!chan.isAMod(client.getNick()))
                         throw ERR_CHANOPRIVSNEEDED;
                     if(commands[i] == 'i')

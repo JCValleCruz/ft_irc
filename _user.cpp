@@ -29,10 +29,15 @@ void Server::parseUser(Client &client)
 			throw(ERR_ALREADYREGISTERED);
 		else if(client.getVerify() == false)
 			throw(ERR_NOTREGISTERED);
-		else if(fullmsg[3] != "*" || fullmsg[2] != "0" || fullmsg[4][0] == '\0')
+		else if(fullmsg[4].empty())
 			throw ERR_NEEDMOREPARAMS;
 		else
+		{
 			client.setUsername(fullmsg[1]);
+			client.setHostname();
+			std::string welcome = ":" + client.getHostname() + " 001 " + client.getNick() + " :Welcome to the IRC Network " + client.getHostname();
+			client.setResponse(welcome);
+		}
 	}
 	catch(ERR num)
 	{
