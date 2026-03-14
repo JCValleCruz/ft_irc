@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   _quit.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 14:15:38 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/18 12:10:10 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:54 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-//si este client es el unico moderador y hay otra persona le damos moderador a el
 void Server::nextModerator(std::string nick, Channel &channel)
 {
 	if(channel.getClients().size() > 1)

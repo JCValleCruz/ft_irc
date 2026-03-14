@@ -6,7 +6,7 @@
 /*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:49:46 by jormoral          #+#    #+#             */
-/*   Updated: 2025/10/07 19:26:05 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:57:49 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ Server::Server(int port, char *password){
 }
 
 int Server::initServerSocket(){
-	//int servsocket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);-> Linux Only
     int servsocket = socket(AF_INET, SOCK_STREAM, 0);
     if(servsocket == -1)
 		errorPrint("Failed to create socket");
@@ -59,10 +58,7 @@ sockaddr_in Server::initServerAddress(int port){
 	memset(&address, 0, sizeof(address));
     address.sin_family = AF_INET;
     address.sin_port = htons(port);
-    //address.sin_addr.s_addr = INADDR_ANY;
-/* //this->ip_address = "10.11.5.4";
-	if(inet_pton(AF_INET, ip_address.c_str(), &address.sin_addr) <= 0)
-        errorPrint("Invalid IP address format"); */
+    address.sin_addr.s_addr = INADDR_ANY;
     return (address);
 }
 
@@ -83,7 +79,7 @@ void Server::initHostName(){
 }
 
 int Server::checkConnections(void) {
-    int result = poll(&this->polls[0], polls.size(), 0);
+    int result = poll(&this->polls[0], polls.size(), -1);
     if (result == -1 && !g_signal) 
 		errorPrint("Error while trying to poll()");
     return (result);
@@ -96,10 +92,10 @@ int Server::updateConnections()
 	{
 		if(this->polls[i].revents > 0)
 		{
-			if(this->polls[i].fd == this->server_socket)// if(i == 0)?? 0 es serverpoll
+			if(this->polls[i].fd == this->server_socket)
 				newClient();
 			else
-				manageClientMessage(this->clients[this->polls[i].fd]); // send the client
+				manageClientMessage(this->clients[this->polls[i].fd]);
 		}
 		i++;
 	}
@@ -119,49 +115,25 @@ void Server::manageClientMessage(Client &client)
 	}
 	if(len == 0)
 	{
-		//std::cout << "Client on SOCKET[" << client.getSocket() <<"] DISCONNECTED" << std::endl;
-		//void Server::parseQuit(Client &client) EL QUIT YA HACE DISCONECT 
-		//aqui hay que quitar al compa de los grupos. usamos 
 		this->parseQuit(client);
 	}
-	//chequear si el buffer tiene algo antes 
-	//std::cout << PURPLE << buffer << WHITE << std::endl;
-	//std::cout << PURPLE << message << WHITE << std::endl;
-	//std::cout << "Salio de aqui" << std::endl;
-	std::string message(buffer);
 	if (len > 0)
 	{
-		if(count_char(message, '\n') >= 2)
+		std::string accumulated = client.getMessage() + std::string(buffer);
+		size_t pos;
+		while ((pos = accumulated.find('\n')) != std::string::npos)
 		{
-			std::vector<std::string> temp = ft_split(message, '\n', 0);
-			size_t i = 0;
-			while(i < temp.size())
-			{
-				client.setMessage(temp[i]);
-				parseMessage(client);
-				client.setMessage("");
-				i++;
-			}
-		}
-		else if(message.find("\n") != std::string::npos) // lo encuentra
-		{
-			client.setMessage(client.getMessage() + message);
+			client.setMessage(accumulated.substr(0, pos + 1));
 			parseMessage(client);
-			client.setMessage("");
+			accumulated = accumulated.substr(pos + 1);
 		}
-		else if(message.find("\n") == std::string::npos)
-		{
-			client.setMessage(client.getMessage() + message);
-			//std::cout << RED <<"mensaje cortado:\"" << client.getMessage() << "\"" << WHITE <<std::endl;
-			message = "";
-		}
+		client.setMessage(accumulated);
 	}
 }
 
 void Server::parseMessage(Client &client)
 {
 	std::string message(client.getMessage());
-	//Convertir en funcion clean?
 	if(!message.empty() && message[message.size() - 1] == '\n')
 		message.erase(message.size() - 1);	
 	if(!message.empty() && message[message.size() - 1] == '\r')
@@ -172,14 +144,6 @@ void Server::parseMessage(Client &client)
 	client.setMessage(message);
 
 	client.setFullmsg(ft_split(message , ' ', ':'));
-	/* for(size_t i = 0; i < client.getFullmsg().size(); i++)				//esto no renta by jc
-	{
-		if(client.getFullmsg()[i] == "")
-		{
-			std::cerr << "NULL PARAMETER NOOOOOOO" << std::endl;
-			return;
-		}
-	} */
 	std::vector<std::string> fullmsg = client.getFullmsg();
 
 	printVector(client.getFullmsg());
@@ -190,7 +154,6 @@ void Server::parseMessage(Client &client)
 		if(fullmsg[0] == system_commands[i])
 		{
 			system_switch(i, client);
-			//this.map<clientes>.sendResponse.cliente->send(clientsocket(), char *);M
 			client.sendResponse();
 		}
 		if(client.getNick() != "" && client.getUsername() != "")
@@ -250,13 +213,6 @@ void Server::system_switch(int i, Client &client)
 	}
 }
 
-/*void Server::parseUser(Client &client){
-}
-void Server::parseCap(Client &client){
-}
-void Server::parseQuit(Client &client){
-} */
-
 void Server::newClient()
 {
 	sockaddr_in address;
@@ -274,7 +230,6 @@ void Server::newClient()
 	this->polls.push_back(createdPoll);
 	this->clients[clisocket] = createdClient;
 	std::cout << "Client socket " << clisocket << " connected."<< std::endl;
-	//rip henry & paul
 }
 
 void Server::disconnectClient(Client &clien){
@@ -285,16 +240,10 @@ void Server::disconnectClient(Client &clien){
 		{
 			this->polls.erase(it);
 			close(client.getSocket());
-			//this->clients.erase(client.getSocket());
 			break;
 		}
 	}
 
-	//std::cout << "Client on SOCKET[" << client.getSocket() <<"] DISCONNECTED" << std::endl;
-
-	//std::map<int, Client> auxmap = this->clients;
-	//std::cout << "Nodes in map " << this->clients.size() << std::endl;
-	//std::cout << "Nodes in vect " << this->polls.size() << std::endl;
 }
 
 std::string Server::gethostName(){

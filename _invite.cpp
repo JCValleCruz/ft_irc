@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   _invite.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:47:02 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/22 12:47:05 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:22 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-//INVITE target chan
+
 void	Server::parseInvite(Client &client)
 {
     try
@@ -26,9 +26,9 @@ void	Server::parseInvite(Client &client)
             throw(ERR_NOTONCHANNEL);
         if(temp.isInChannel(client.getFullmsg()[1]))
             throw(ERR_USERONCHANNEL);
-		std::string response = client.getHostname() + " INVITE " + client.getFullmsg()[1] + " " + temp.getName();
+		std::string response = ":" + client.getHostname() + " INVITE " + client.getFullmsg()[1] + " " + temp.getName();
         temp.setResponse(response);
-        temp.sendResponseChannel(response, client, 0);
+        send(getClientSocket(client.getFullmsg()[1]), (response + "\r\n").c_str(), response.size() + 2, 0);
 		temp.invitedClients.push_back(client.getFullmsg()[1]);
     }
     catch(ERR num)

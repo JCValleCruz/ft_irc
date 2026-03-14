@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   _kick.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 17:33:50 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/18 14:24:26 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:28 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-
-///// kick #canal target  :reason            el target tiene Privilegios?
-//     [0]   [1]    [2]     [3] 
-// getKicked("reason", client);
-// 		-> grupo 
-// 		-> target
-// 0(no esta) 1(esta) 2(esta y es mod)
 
 void Server::parseKick(Client &client)
 {

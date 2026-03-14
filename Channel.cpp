@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jose-rig <jose-rig@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 12:33:49 by jose-rig          #+#    #+#             */
-/*   Updated: 2025/09/18 16:49:30 by jose-rig         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:57:06 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,26 +28,20 @@ Channel::Channel(std::string name, Server &server) : server(&server)
 
 int Channel::addClient(Client &client)
 {
-	//COMPROBAR SI YA ESTA EL CLIENTE EN EL GRUPO
-
 	for(size_t i = 0; i < this->clients.size(); i++)
 	{
 		if(this->clients[i].getNick() == client.getNick())
 		{
-			//ERR num??
 			std::cout << "Client already in this Channel:" << this->name << std::endl;
 			return -1;
 		}
 	}
-	//METER AL CLIENTE EN EL VECTOR DE CLIENTES DEL GRUPO
 	this->clients.push_back(client);
-	//MANDAR MENSAJE AL GRUPO DE QUE CLIENTE SE HA UNIDO
 	std::string response = ":" + client.getHostname() + " JOIN :" + this->name ;
 	setResponse(response);
-	
+
 	client.setResponse(response + "\r\n");
-	//if(this->topic != "")
-	rplTopic(client, *this); //rplTopic 332
+	rplTopic(client, *this);
 	client.setResponse(client.getResponse() + "\r\n");
 	std::string info_msg = ":" + this->server->gethostName() + " 353 " + client.getNick() + " = " + this->name + " :";
 	std::string client_names = "";
@@ -67,7 +61,6 @@ int Channel::addClient(Client &client)
 	client.setResponse(client.getResponse() + endofnames); client.sendResponse();
 	
 	sendResponseChannel(this->getResponse(), client, 1);
-	//mandar topic rpl
 	std::cout << "-debugClient " << client.getNick() << " added to Channel:" << this->name << std::endl;
 	return(1);
 }
@@ -196,8 +189,6 @@ void Channel::removeClient(Client &client)
 			return;
 		}
 	}
-	//std::cout << "Channel::removeClient size= " << this->clients.size() << std::endl;
-
 }
 int	Channel::isInChannel(std::string name)
 {
@@ -216,13 +207,10 @@ int Channel::kickClient(std::string target, Client &mod, std::string reason)
 
 	while(it != this->clients.end())
 	{
-		// Parameters: <channel> <user> *( "," <user> ) [<comment>]
-		// :WiZ!jto@tolsun.oulu.fi KICK #Finnish John
-		if(target == (*it).getNick())
+			if(target == (*it).getNick())
 		{
 			std::string response = ":" + mod.getHostname() + " KICK " + this->getName() + " " + target + reason;
 			this->sendResponseChannel(response, mod, 0);
-			//(*it).removeChannelfromClient(this);
 			this->removeFromMods((*it));
 			this->clients.erase(it);
 			std::cout << "channel::size after remove " << this->clients.size() << std::endl;
@@ -265,7 +253,6 @@ void Channel::setModeTopic(bool a){
 bool Channel::getModeTopic(void){
 	return(this->modeTopic);
 }
-//i k t l
 std::string Channel::getModes(){
 	std::string modes = "+";
 	if(this->modeInvite == true)

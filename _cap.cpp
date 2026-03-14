@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   _cap.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:46:56 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/22 12:47:19 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:16 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-//CAP LS || CAP LS * 302
+
 void Server::parseCap(Client &client)
 {
 	try

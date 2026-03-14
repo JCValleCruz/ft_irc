@@ -24,7 +24,6 @@ void Server::parseNick(Client &client){
 		if(nickInvalidChars(client.getFullmsg()[1]) || client.getFullmsg().size() > 2) 
 			throw(ERR_ERRONEUSNICKNAME);
 		
-		//MENSAJE A TODOS LOS CANALES DEL CLIENTE + al propio cliente con nick actualizado
 		client.setNick(client.getFullmsg()[1]);
 		client.changeNick = true;
 
@@ -53,10 +52,8 @@ int Server::nickInvalidChars(std::string nick)
 	char first = nick[0];
 	if(first == '#' || first == ':' || first == ' ')
 		return 1;
-	//and MAY disallow digits as the first character
 	if(first >= '0' && first <= '9')
 		return (1);
-	//square and curly brackets ([]{}), backslashes (\), and pipe (|) characters in nicknames
 	int i = 0;
 	while(nick[i])
 	{

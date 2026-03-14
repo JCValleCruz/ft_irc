@@ -13,21 +13,6 @@
 
 #include "Server.hpp"
 
-//MODE Target String arguments
-//Parameters: <target> [<modestring> [<mode arguments>...]]
-//                                                                   
-//MODE a secas -> (324)"<client> <channel> <modestring> <mode arguments>..."+ (329) creation
-//                    Jose-rig #test [+ilk] {: (keys) ?} + hora de creacion - Hexchat?
-// MODE #test , existe el canal? perfe throw 324 channelmodeis
-// :irc.ejemplo.com 324 tu_nick #test +ntl 50
-// A
-// B MUST have argument, change setting on a channel (+o)
-// C (+k, +l(471)) -> 55/50 o 15/50 MUST arg || (-k -l ) NO ARG
-// D MUST not have arguemttn (+i(473), +t(noprivs))
-//When the server is done processing the modes,
-//a MODE command is sent to all members of the channel containing the mode changes.
-//:dan!~h@localhost MODE #foobar -bl+i
-
 void Server::parseMode(Client &client)
 {
     try
@@ -57,71 +42,78 @@ void Server::parseMode(Client &client)
         }
         else if((client.getFullmsg()[2].size() > 1 && client.getFullmsg()[2][0] == '+') || client.getFullmsg()[2][0] == '-')
         {
-            //MODE #channel +iklo 1234 50 
-            std::vector<std::string> args; // y si sobran al final??
-            for(size_t i = 3; i < client.getFullmsg().size(); i++)
-                args.push_back(client.getFullmsg()[i]);
-            
-            std::map<char, std::string> cmap;
-            std::string commands = client.getFullmsg()[2];
-            char sign = commands[0];
-            for(size_t i = 1; i < commands.size(); i++)
+            std::vector<std::string> mode_tokens;
+            std::vector<std::string> args;
+            for(size_t i = 2; i < client.getFullmsg().size(); i++)
             {
-				cmap[commands[i]] = "";
-                if(args.size() > 0)
+                if(client.getFullmsg()[i][0] == '+' || client.getFullmsg()[i][0] == '-')
+                    mode_tokens.push_back(client.getFullmsg()[i]);
+                else
+                    args.push_back(client.getFullmsg()[i]);
+            }
+            response += client.getHostname() + " MODE " + chan.getName();
+            int flag = 1;
+            for(size_t mt = 0; mt < mode_tokens.size(); mt++)
+            {
+                std::map<char, std::string> cmap;
+                std::string commands = mode_tokens[mt];
+                char sign = commands[0];
+                for(size_t i = 1; i < commands.size(); i++)
                 {
-                    if((commands[i] == 'o') || (sign == '+' && (commands[i] == 'k' || commands[i] == 'l')))
+                    cmap[commands[i]] = "";
+                    if(args.size() > 0)
                     {
-                        cmap[commands[i]] = args[0];
-                        args.erase(args.begin());
+                        if((commands[i] == 'o') || (sign == '+' && (commands[i] == 'k' || commands[i] == 'l')))
+                        {
+                            cmap[commands[i]] = args[0];
+                            args.erase(args.begin());
+                        }
                     }
                 }
-            }
-            int i = 1;
-            response += client.getHostname() + " MODE " + chan.getName() + " " + commands;
-            //:dan!~h@localhost MODE #foobar +i
-            // 
-            // -ko pepe
-			int flag = 1;
-            while(commands[i])
-            {
-                if(commands.find_first_not_of("itklo", 1) != std::string::npos)
-                    throw(ERR_UNKNOWNCOMMAND);
-                if(!chan.isAMod(client.getNick()))
+                int i = 1;
+                response += " " + commands;
+                while(commands[i])
+                {
+                    if(commands.find_first_not_of("itklo", 1) != std::string::npos)
+                        throw(ERR_UNKNOWNCOMMAND);
+                    if(!chan.isAMod(client.getNick()))
                         throw ERR_CHANOPRIVSNEEDED;
-                if(commands[i] == 'i')
-                    setModeInvite(sign, chan);
-                else if(commands[i] == 't')
-                    setModeTopic(sign,  chan);
-                else if(commands[i] == 'k')
-                {
-					if(cmap['k'] == "" && sign == '+')
-						throw(ERR_NEEDMOREPARAMS);
-                    setModeKey(sign, chan, cmap['k']);
+                    if(commands[i] == 'i')
+                        setModeInvite(sign, chan);
+                    else if(commands[i] == 't')
+                        setModeTopic(sign, chan);
+                    else if(commands[i] == 'k')
+                    {
+                        if(cmap['k'] == "" && sign == '+')
+                            throw(ERR_NEEDMOREPARAMS);
+                        setModeKey(sign, chan, cmap['k']);
+                        if(sign == '+')
+                            response += " " + cmap['k'];
+                    }
+                    else if(commands[i] == 'l')
+                    {
+                        if(cmap['l'] == "" && sign == '+')
+                            throw(ERR_NEEDMOREPARAMS);
+                        setModeLimit(sign, chan, cmap['l']);
+                        response += " " + cmap['l'];
+                    }
+                    else if(commands[i] == 'o')
+                    {
+                        if(cmap['o'] == "")
+                            throw(ERR_NEEDMOREPARAMS);
+                        flag = setModeModerator(sign, chan, cmap['o'], client);
+                        response += " " + cmap['o'];
+                    }
+                    i++;
                 }
-                else if(commands[i] == 'l')
-                {
-					if(cmap['l'] == "" && sign == '+')
-						throw(ERR_NEEDMOREPARAMS);
-                    setModeLimit(sign, chan, cmap['l']);
-                    response +=  " " + cmap['l'];
-                }
-                else if(commands[i] == 'o')
-                {
-					if(cmap['o'] == "")
-						throw(ERR_NEEDMOREPARAMS);
-                    flag = setModeModerator(sign, chan, cmap['o'], client);
-                    response +=  " " + cmap['o'];
-                }
-                i++;
             }
-			if(flag != -1)
-            	chan.sendResponseChannel(response, client, 0);
-			flag = 1;
+            if(flag != -1)
+                chan.sendResponseChannel(response, client, 0);
+            flag = 1;
             std::cout << GREEN << "Nº moderadores "<< chan.getModerators().size() << WHITE << std::endl;
         }
         else
-            throw(ERR_UNKNOWNCOMMAND); //? las flags no llevan signo
+            throw(ERR_UNKNOWNCOMMAND);
         
     }
     catch(ERR num)

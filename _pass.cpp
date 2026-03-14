@@ -3,29 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   _pass.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 13:28:46 by jose-rig          #+#    #+#             */
-/*   Updated: 2025/09/01 16:20:52 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:44 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 void Server::parsePass(Client &client){
-	//parse alphanumeric y longitud
 	std::vector<std::string> fullmsg = client.getFullmsg();
 	std::cout << PURPLE << fullmsg.size() << std::endl;
 	std::cout << WHITE;
-	if(client.getVerify() == true) 
+	if(client.getVerify() == true)
 	{
-		//std::cerr << ERR_ALREADYREGISTERED << "(" << client.getSocket() << ")" << std::endl;
 		err(ERR_ALREADYREGISTERED, this->hostname, client);
 		return ;
 	}
 	else if(fullmsg.size() != 2)
 	{
-		//std::cerr << ERR_NEEDMOREPARAMS << "(" << client.getSocket() << ")" << std::endl;
 		err(ERR_NEEDMOREPARAMS, this->hostname, client);
 		return;
 	}

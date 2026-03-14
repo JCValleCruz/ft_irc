@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   _part.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/22 12:50:43 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:41 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-// PART #canal :reason
-//    0   1       2
-//siz 1   2       80
 void Server::parsePart(Client &client)
 {
     try
@@ -32,7 +29,7 @@ void Server::parsePart(Client &client)
             int n = this->findChannelNumber(vec_channel[i]);
             if(n == -1)
                 throw ERR_NOSUCHCHANNEL;
-            if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)//esta en el canal?
+            if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
 			nextModerator(client.getNick(), this->channels[n]);
 			this->channels[n].removeClient(client);

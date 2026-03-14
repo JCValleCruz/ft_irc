@@ -78,7 +78,6 @@ void initializeErrorMessages() {
     errorMessages[ERR_UMODEUNKNOWNFLAG] = "Unknown MODE flag";
     errorMessages[ERR_USERSDONTMATCH] = "Cannot change mode for other users";
 
-    // Additional error codes
     errorMessages[ERR_HELPNOTFOUND] = "Help not found";
     errorMessages[ERR_INVALIDCAPCMD] = "Invalid CAP command";
     errorMessages[ERR_NICKLOCKED] = "You must use a registered nick to perform this command";

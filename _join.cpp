@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _join.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:47:44 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/22 12:47:47 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 12:56:25 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 void Server::joinChannel(Client &client)
 {
-	try{// JOIN #test,#prueba 1234,5454     -> test(1234) prueba(5454)
+	try{
 		std::vector<std::string> fullmsg = client.getFullmsg();
 		std::vector<std::string> key;
 		std::vector<std::string> names;
-		if(fullmsg.size() <= 1) 
-			throw(ERR_NEEDMOREPARAMS);			//split for ',' para unirse a varios. nasty
+		if(fullmsg.size() <= 1)
+			throw(ERR_NEEDMOREPARAMS);
 		if(fullmsg.size() > 1)
 			names = ft_split(fullmsg[1], ',', '\0');
-		if(fullmsg.size() > 2) //size empieza en 1. yaaaa
+		if(fullmsg.size() > 2)
 			key = ft_split(fullmsg[2], ',', '\0');
 		for (size_t i = 0; i < names.size(); i++)
 		{
@@ -42,8 +42,8 @@ void Server::joinChannel(Client &client)
 				int num = this->findChannelNumber(names[i++]);
 				if(this->channels[num].isInChannel(client.getNick()))
 					throw(ERR_ALREADYINCHAN);
-				for(size_t x = 0; x < names.size(); x++) //// JOIN #test,#prueba 1234,5454     -> test(1234) prueba(5454)     --- JOIN #test,#prueba 1234
-				{																		// names["test", "prueba"] key["1234", "5454"]
+				for(size_t x = 0; x < names.size(); x++)
+			{
 					for(size_t i = 0; i < this->channels.size(); i++)
 					{
 						if(this->channels[i].getName() == names[x]) // i =localizamos el canal dentro del vector de canales server
@@ -70,7 +70,7 @@ void Server::joinChannel(Client &client)
 										throw(ERR_INVITEONLYCHAN);
 								}
 								else if(x + 1 > key.size())
-									throw ERR_NEEDMOREPARAMS; // ok 
+									throw ERR_BADCHANNELKEY;
 								else
 									throw ERR_BADCHANNELKEY; //compila
 							}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server_Utils.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jormoral <jormoral@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:49:55 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/22 12:49:56 by jormoral         ###   ########.fr       */
+/*   Updated: 2026/03/14 13:13:23 by jvalle-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ Channel Server::getChannel(std::string chaname)
 	{
 		if(this->channels[i].getName() == chaname)
 			break;
+		i++;
 	}
 	return(this->channels[i]);
 }

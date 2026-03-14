@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
-// Parameters: <channel> [<topic>]
+
 void rplTopic(Client &client, Channel &chan)
 {
 	std::string response;
@@ -22,7 +22,7 @@ void rplTopic(Client &client, Channel &chan)
     }
     else
     {
-        response = ":" + client.getHostname() + " 332 " + client.getNick() + " " + chan.getName() + " " + chan.getTopic();
+        response = ":" + client.getHostname() + " 332 " + client.getNick() + " " + chan.getName() + " :" + chan.getTopic();
         client.setResponse(client.getResponse() + response);
     }
 }
@@ -47,9 +47,8 @@ void Server::parseTopic(Client &client)
         }
         else if(client.getFullmsg().size() == 3)
         {
-			if(!temp.isInChannel(client.getNick()))     // Volver a comprobarsi estamos en el CANAL!!!
+			if(!temp.isInChannel(client.getNick()))
 				throw(ERR_NOTONCHANNEL);
-			//TOPIC #test :f
             if(temp.getModeTopic() == true)
             {
                 if(!temp.isAMod(client.getNick()))
@@ -63,12 +62,12 @@ void Server::parseTopic(Client &client)
             else if(client.getFullmsg()[2].length() > 390) //truncate
             {
                 temp.setTopic(client.getFullmsg()[2].erase(0, 1).substr(0, 389));
-                response = ":" + client.getHostname() + " TOPIC " + temp.getName() + " " + temp.getTopic();
+                response = ":" + client.getHostname() + " TOPIC " + temp.getName() + " :" + temp.getTopic();
             }
             else if(client.getFullmsg()[2][0] == ':') // all good
             {
                 temp.setTopic(client.getFullmsg()[2].erase(0, 1));
-                response = ":" + client.getHostname() + " TOPIC " + temp.getName() + " " + temp.getTopic();
+                response = ":" + client.getHostname() + " TOPIC " + temp.getName() + " :" + temp.getTopic();
             }
             else
                 throw(ERR_UNKNOWN);
