@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:52 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:53 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/16 21:27:21 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ public:
 	void	parsePrivmsg(Client &client);
 	void	parseChangeNick(Client &client);
 	void	parseTopic(Client &client);
+	void	parseNotice(Client &client);
 	int		channelExists(std::string name);
 	Channel	getChannel(std::string chaname);
 	void	deleteChannel(std::string channel);

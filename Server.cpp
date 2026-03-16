@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:49:46 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:49 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/16 21:32:37 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ void Server::parseMessage(Client &client)
 	}
 	if(client.getUserVerified() == false)                 //MODE a secas? comprobar comandos con y sin arguments
 		return;                                                                                   //+limit +invite +topic +key +o=moderator y con el '-'
-	std::string user_commands[9] = {"JOIN", "KICK", "NICK", "PART", "PRIVMSG", "MODE", "TOPIC", "INVITE", "QUIT"};
+	std::string user_commands[9] = {"JOIN", "KICK", "NICK", "PART", "PRIVMSG", "MODE", "TOPIC", "INVITE", "NOTICE"};
 	for(int i = 0; i < 9; i++)                                                // TOPIC #canal? -> le dice el topic a la persona? de todos los canales?
 	{
 		if(fullmsg[0] == user_commands[i])
@@ -193,6 +193,8 @@ void Server::user_switch(int i, Client &client)
 			parseTopic(client);break;
 		case 7:
 			parseInvite(client);break;
+		case 8:
+			parseNotice(client);break;
 	}
 }
 

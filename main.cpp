@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:05 by jormoral          #+#    #+#             */
-/*   Updated: 2025/10/07 19:58:05 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/16 19:46:15 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ int main(int argc , char **argv) {
 	}
     signal(SIGINT, signalHandler);
     signal(SIGQUIT, signalHandler);
+    signal(SIGTSTP, signalHandler);
     if((std::atoi(argv[1]) <= 0) || (std::atoi(argv[1]) > 65535)){							// ni letas ni negativos
 		std::cerr << "Port was incorrect, please input a valid port number"	<< std::endl;
 		return (1);

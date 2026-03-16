@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:24 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:25 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/16 19:52:05 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ private:
 	std::string response;
 	int retries;
 	
-	struct hostent* host; 											// Fumada------------------------
+	struct hostent* host;
 	std::string hostname;
 	std::vector<std::string> fullmsg;
 	
