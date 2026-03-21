@@ -6,7 +6,7 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:52 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/21 20:42:24 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/21 20:43:59 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ public:
 	void setModeKey(char sign, Channel &temp, std::string arg);
 	void setModeLimit(char sign, Channel &temp, std::string arg);
 	int setModeModerator(char sign, Channel &temp,std::string arg, Client &client);
-	//void updateChannelList(Client &client, Channel &channel);
 };
 
 void rplTopic(Client &client, Channel &chan);
