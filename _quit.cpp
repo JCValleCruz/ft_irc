@@ -3,33 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   _quit.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 14:15:38 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:54 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/21 20:36:54 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Client.hpp"
 #include "Server.hpp"
+#include <vector>
 
 void Server::nextModerator(std::string nick, Channel &channel)
 {
-	if(channel.getClients().size() > 1)
+	if(!channel.getClients().empty())
 	{
-		if(channel.getModerators().size() == 1 && channel.isAMod(nick))
-		{
-			size_t i = 0;
-			while (i < channel.getClients().size())
-			{
-				if(channel.getClients()[i].getNick() != nick)
-				{
-					channel.addToMods(channel.getClients()[i]);
-					channel.removeFromMods(nick);
-					return ;
-				}
-				i++;
-			}
-		}
+			channel.addToMods(channel.getClients()[0]);
+			channel.removeFromMods(nick);
+			std::string new_mod_nick = channel.getClients()[0].getNick();
+			std::string mode_response = ":" + this->hostname + " MODE " + channel.getName() + " +o " + new_mod_nick;
+			channel.sendResponseChannel(mode_response, channel.getClients()[0], 0);
+			
 	}
 }
 
@@ -40,13 +34,16 @@ void Server::parseQuit(Client &client)
 	{
 		if(this->channels[i].isInChannel(client.getNick()) == 1)
 		{
-			std::string nick = client.getNick();
-			nextModerator(nick ,this->channels[i]);
 			this->channels[i].removeClient(client);
-			if(this->channels[i].getClients().size() == 0)
-				deleteChannel(this->channels[i].getName());
+			if (this->channels[i].getModerators().size() == 1 && this->channels[i].isAMod(client.getNick()))
+				nextModerator(client.getNick(), this->channels[i]);
 			else
+				this->channels[i].removeFromMods(client);
+			if(this->channels[i].getClients().empty())
+				deleteChannel(this->channels[i].getName());
+			else{
 				this->channels[i].sendResponseChannel(response + this->channels[i].getName(), client, 0);
+			}
 		}
 	}
 	disconnectClient(client);

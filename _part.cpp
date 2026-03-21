@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _part.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:41 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/21 20:41:02 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void Server::parsePart(Client &client)
 {
     try
 	{
-        std::string response = ":" + client.getHostname() + " HAS LEFT ";
+        std::string response = ":" + client.getHostname() + " PART ";
 		std::vector<std::string> fullmsg = client.getFullmsg();
 		std::string reason = "";
 		if(fullmsg.size() < 2 || fullmsg.size() > 3)
@@ -31,9 +31,12 @@ void Server::parsePart(Client &client)
                 throw ERR_NOSUCHCHANNEL;
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
-			nextModerator(client.getNick(), this->channels[n]);
-			this->channels[n].removeClient(client);
-            if(this->channels[n].getClients().size() == 0)
+			this->channels[i].removeClient(client);
+			if (this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
+				nextModerator(client.getNick(),this->channels[n]);
+			else
+				this->channels[n].removeFromMods(client);
+            if (this->channels[n].getClients().empty())
 				deleteChannel(this->channels[n].getName());
 			else
 				this->channels[n].sendResponseChannel(response + this->channels[n].getName() + reason, client, 0);
