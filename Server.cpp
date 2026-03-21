@@ -6,11 +6,12 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:49:46 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/16 21:32:37 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/21 20:41:51 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <vector>
 
 template <typename T> void printVector(T &array)
 {
@@ -233,18 +234,17 @@ void Server::newClient()
 	std::cout << "Client socket " << clisocket << " connected."<< std::endl;
 }
 
-void Server::disconnectClient(Client &clien){
-	Client client = clien;
+void Server::disconnectClient(Client &client){
+	Client aux = client;
 	for(std::vector<struct pollfd>::iterator it = this->polls.begin(); it != this->polls.end(); ++it)
 	{
-		if(client.getSocket() == (*it).fd)
+		if(aux.getSocket() == (*it).fd)
 		{
 			this->polls.erase(it);
-			close(client.getSocket());
+			close(aux.getSocket());
 			break;
 		}
 	}
-
 }
 
 std::string Server::gethostName(){

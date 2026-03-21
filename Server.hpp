@@ -6,7 +6,7 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:52 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/16 21:27:21 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/21 20:43:59 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ public:
 	int		channelExists(std::string name);
 	Channel	getChannel(std::string chaname);
 	void	deleteChannel(std::string channel);
-	void	disconnectClient(Client &Client);
+	void	disconnectClient(Client &client);
 	void	printVector(std::vector<std::string> vec);
     void	printServer();
 	int		count_char(std::string message, char delim);
