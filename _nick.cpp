@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _nick.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 12:25:07 by jose-rig          #+#    #+#             */
-/*   Updated: 2025/09/29 20:02:50 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 21:38:39 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void Server::parseNick(Client &client){
 			throw(ERR_NOTREGISTERED);
 		if(client.getFullmsg().size() != 2)
 			throw(ERR_NONICKNAMEGIVEN);
+		if(client.getFullmsg()[1] == "GabiBot")
+			throw(ERR_NICKNAMEINUSE);
 		if(this->nickInUse(client.getFullmsg()[1]))
 			throw(ERR_NICKNAMEINUSE);
 		if(nickInvalidChars(client.getFullmsg()[1]) || client.getFullmsg().size() > 2) 

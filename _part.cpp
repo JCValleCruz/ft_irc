@@ -6,7 +6,7 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/22 21:10:42 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/22 21:24:23 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,36 +32,33 @@ void Server::parsePart(Client &client)
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
 			this->channels[i].removeClient(client);
-			//this->channels[n].getModerators().size() > 1 &&
 			if (this->channels[n].getClients().size() > 1 && this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
 				nextModerator(client.getNick(),this->channels[n]);
 			else if (this->channels[n].isAMod(client.getNick())){
 				this->channels[i].removeClient(*botClient);
 				this->channels[n].removeFromMods(client);
 			}
-            if (this->channels[n].getClients().empty())
-				deleteChannel(this->channels[n].getName());
-			else{
-				std::vector<Client> aux= this->channels[n].getClients();
-				std::string info_msg = ":" + gethostName() + " 353 " + client.getNick() + " = " + channels[n].getName() + " :";
-				std::string client_names = "";
-				for(size_t i = 0; i < aux.size(); i++)
-				{
-					if(this->channels[n].isAMod(aux[i].getNick()))
-						client_names += "@";
+			std::vector<Client> aux= this->channels[n].getClients();
+			std::string info_msg = ":" + gethostName() + " 353 " + client.getNick() + " = " + channels[n].getName() + " :";
+			std::string client_names = "";
+			for(size_t i = 0; i < aux.size(); i++)
+			{
+				if(this->channels[n].isAMod(aux[i].getNick()))
+					client_names += "@";
 
-					client_names += aux[i].getNick();
+				client_names += aux[i].getNick();
 
-					if(i + 1 != aux.size())
-						client_names += " ";
-				}
-				info_msg += client_names;
-				client.setResponse(client.getResponse() + info_msg + "\r\n"); 
-				std::string endofnames = ":" + gethostName() + " 366 " + client.getNick() + " " + channels[n].getName() + " :End of /NAMES list.";
-				client.setResponse(client.getResponse() + endofnames); client.sendResponse();
-
-				this->channels[n].sendResponseChannel(response + this->channels[n].getName() + reason, client, 0);
+				if(i + 1 != aux.size())
+					client_names += " ";
 			}
+			info_msg += client_names;
+			client.setResponse(client.getResponse() + info_msg + "\r\n"); 
+			std::string endofnames = ":" + gethostName() + " 366 " + client.getNick() + " " + channels[n].getName() + " :End of /NAMES list.";
+			client.setResponse(client.getResponse() + endofnames); client.sendResponse();
+
+			this->channels[n].sendResponseChannel(response + this->channels[n].getName() + reason, client, 0);
+			if (this->channels[n].getClients().empty())
+				deleteChannel(this->channels[n].getName());
         }
 	}
 	catch(ERR num)
