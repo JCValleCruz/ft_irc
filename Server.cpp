@@ -6,7 +6,7 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:49:46 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/21 20:41:51 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/22 21:02:42 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ Server::Server(int port, char *password){
     listen(server_socket, 6);
     initPolls();
     initHostName();
+	initBotClient();
     printServer();
 }
 
@@ -260,4 +261,49 @@ void Server::notifyAll(std::string response){
 	}
 	std::cout << "server::Notify =" << response << std::endl;
 
+}
+
+Server::~Server()
+{
+	delete botClient;
+}
+
+void Server::initBotClient()
+{
+	sockaddr_in fake_addr;
+	memset(&fake_addr, 0, sizeof(fake_addr));
+
+	botClient = new Client(-1, fake_addr);
+	botClient->setNick("GabiBot");
+	botClient->setUsername("bot");
+	botClient->setVerify(true);
+
+	std::string botHostname = "GabiBot!bot@" + this->hostname;
+	botClient->setHostnameManual(botHostname);
+	
+	// We cant use setHostname because it needs DNS lookup
+}
+
+Client* Server::getBotClient()
+{
+	return botClient;
+}
+
+void Server::checkBotShouldLeave(Channel &channel)
+{
+	std::vector<Client> users = channel.getClients();
+
+	// If the bot is the only one left, leave the channel
+	if (users.size() == 0 || (users.size() == 1 && users[0].getNick() == botClient->getNick()))
+	{
+		std::string response = ":GabiBot!bot@" + this->hostname + " PART " + channel.getName() + "\r\n";
+		
+		for (size_t i = 0; i < users.size(); i++)
+		{
+			if (users[i].getSocket() != -1) // Dont send bot (socket -1)
+				send(users[i].getSocket(), response.c_str(), response.length(), 0);
+		}
+		
+		channel.removeClient(*botClient);
+	}
 }

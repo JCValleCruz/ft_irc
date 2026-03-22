@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _kick.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 17:33:50 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:28 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 21:18:58 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void Server::parseKick(Client &client)
 			throw (ERR_NOSUCHCHANNEL);
 		if(client.getNick() == fullmsg[2])
 			throw (ERR_NOSELFKICK);
+		if(fullmsg[2] == "GabiBot")
+			throw (ERR_DONTKICKMABOT);
 		if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)//estamos in?
 			throw (ERR_NOTONCHANNEL);
 		if(this->channels[n].clientLevelInChannel(client.getNick()) == 1) //somos mods?
@@ -34,6 +36,7 @@ void Server::parseKick(Client &client)
 		if(this->channels[n].kickClient(fullmsg[2], client, reason) != 1)
 			throw (ERR_USERNOTINCHANNEL);
 
+		checkBotShouldLeave(this->channels[n]);
 	}
 	catch(ERR num)
 	{

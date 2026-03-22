@@ -6,7 +6,7 @@
 #    By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/14 12:57:37 by jvalle-d          #+#    #+#              #
-#    Updated: 2026/03/16 21:28:56 by aehrl            ###   ########.fr        #
+#    Updated: 2026/03/22 20:54:14 by aehrl            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJDIR = obj
 
 SRCS := main.cpp Server.cpp Server_Utils.cpp Client.cpp _pass.cpp \
 _nick.cpp _join.cpp _user.cpp Channel.cpp _cap.cpp _quit.cpp _kick.cpp _mode.cpp _part.cpp \
-_privmsg.cpp _invite.cpp _topic.cpp _mode1.cpp _notice.cpp
+_privmsg.cpp _invite.cpp _topic.cpp _mode1.cpp _notice.cpp Bot.cpp
 
 OBJS := $(SRCS:%.cpp=$(OBJDIR)/%.o)
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:29 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:30 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 21:19:19 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ enum ERR {
 	ERR_USERLEN = 1234,
     ERR_INVALIDMODEPARAM = 696,
     ERR_ALREADYINCHAN = 697,
+
+	ERR_DONTKICKMABOT = 666,
 };
 
 void err(ERR code, std::string hostname, Client& client, std::string target = "");

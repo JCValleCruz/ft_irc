@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _join.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:47:44 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:25 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 21:03:05 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ void Server::joinChannel(Client &client)
 				temp.addToMods(client);
 				temp.addClient(client);
 				this->channels.push_back(temp);
+
+				int chanIndex = findChannelNumber(names[i]);
+				this->channels[chanIndex].addClient(*botClient);
+
 				std::cout << "SIZE de canales en el Server: " << this->channels.size() << std::endl;
 			}
 			else

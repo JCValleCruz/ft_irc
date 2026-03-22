@@ -6,7 +6,7 @@
 /*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/22 17:39:59 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/22 21:10:42 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,13 @@ void Server::parsePart(Client &client)
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
 			this->channels[i].removeClient(client);
-			if (this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
+			//this->channels[n].getModerators().size() > 1 &&
+			if (this->channels[n].getClients().size() > 1 && this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
 				nextModerator(client.getNick(),this->channels[n]);
-			else if (this->channels[n].isAMod(client.getNick()))
+			else if (this->channels[n].isAMod(client.getNick())){
+				this->channels[i].removeClient(*botClient);
 				this->channels[n].removeFromMods(client);
+			}
             if (this->channels[n].getClients().empty())
 				deleteChannel(this->channels[n].getName());
 			else{

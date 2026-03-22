@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   _privmsg.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:50:22 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:49 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 21:17:52 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "Bot.hpp"
 
 void Server::parsePrivmsg(Client &client)
 {
@@ -26,6 +27,13 @@ void Server::parsePrivmsg(Client &client)
         }
         if(client.getFullmsg()[2][0] != ':')
             throw ERR_NOTEXTTOSEND;
+
+		if (client.getFullmsg()[2].size() > 1 && client.getFullmsg()[2][1] == '!')		/**/
+		{																				/**/
+			Bot::handleCommand(client, *this);											/**/
+			return;																		/**/
+		}
+
         std::vector<std::string> name_vec = ft_split(client.getFullmsg()[1], ',', ':');
         for(size_t i = 0; i < name_vec.size(); i++)
         {
