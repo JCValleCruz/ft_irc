@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+         #
+#    By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/14 12:57:37 by jvalle-d          #+#    #+#              #
-#    Updated: 2026/03/14 12:57:38 by jvalle-d         ###   ########.fr        #
+#    Updated: 2026/03/22 16:20:59 by sbenitez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJDIR = obj
 
 SRCS := main.cpp Server.cpp Server_Utils.cpp Client.cpp _pass.cpp \
 _nick.cpp _join.cpp _user.cpp Channel.cpp _cap.cpp _quit.cpp _kick.cpp _mode.cpp _part.cpp \
-_privmsg.cpp _invite.cpp _topic.cpp _mode1.cpp 
+_privmsg.cpp _invite.cpp _topic.cpp _mode1.cpp Bot.cpp
 
 OBJS := $(SRCS:%.cpp=$(OBJDIR)/%.o)
 

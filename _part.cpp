@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _part.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:41 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:15:46 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ void Server::parsePart(Client &client)
                 throw ERR_NOTONCHANNEL;
 			nextModerator(client.getNick(), this->channels[n]);
 			this->channels[n].removeClient(client);
+
+			checkBotShouldLeave(this->channels[n]);
+
             if(this->channels[n].getClients().size() == 0)
 				deleteChannel(this->channels[n].getName());
 			else

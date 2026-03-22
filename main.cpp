@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:05 by jormoral          #+#    #+#             */
-/*   Updated: 2025/10/07 19:58:05 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:20:41 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void initializeErrorMessages() {
     errorMessages[ERR_USERLEN] = "Username too long";
 	errorMessages[ERR_NOSELFKICK] = "Moderators can't kick themselves from channels";
     errorMessages[ERR_ALREADYINCHAN] = "Client is already in the channel";
+
+	errorMessages[ERR_DONTKICKMABOT] = "You dont have permissions to kick my bot >:(";
 };
 
 void err(ERR code, std::string hostname, Client& client, std::string target)

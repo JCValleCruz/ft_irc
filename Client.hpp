@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:24 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:25 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:20:07 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ private:
 
 		std::string getHostname();
 		void setHostname();
+		void setHostnameManual(std::string hostname);
 		
 		std::vector<std::string> getFullmsg();
 		void setFullmsg(std::vector<std::string>);

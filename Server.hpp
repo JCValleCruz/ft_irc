@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/14 12:57:52 by jvalle-d          #+#    #+#             */
-/*   Updated: 2026/03/14 12:57:53 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:11:37 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "irc.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
+#include "Bot.hpp"
 
 class Client;
 class Channel;
@@ -26,15 +27,17 @@ private:
     int server_socket;
     sockaddr_in server_address;
     std::string hostname;
+	Client* botClient;
 
     int         initServerSocket();
     sockaddr_in initServerAddress(int port);
     void        initPolls();
     void        initHostName();
+	void		initBotClient();
 
 public:
     Server(int port, char *password);
-    ~Server(){};
+    ~Server();
     std::vector<struct pollfd> polls;
 	std::map<int, Client > clients;
 	std::vector<Channel > channels;
@@ -78,6 +81,8 @@ public:
 	void setModeKey(char sign, Channel &temp, std::string arg);
 	void setModeLimit(char sign, Channel &temp, std::string arg);
 	int setModeModerator(char sign, Channel &temp,std::string arg, Client &client);
+	Client*	getBotClient();
+	void	checkBotShouldLeave(Channel &channel);
 };
 
 void rplTopic(Client &client, Channel &chan);

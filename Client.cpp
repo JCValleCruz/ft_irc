@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:24 by jormoral          #+#    #+#             */
-/*   Updated: 2025/09/29 19:28:21 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:19:49 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,3 +105,8 @@ std::vector<std::string> Client::getFullmsg(){
 void Client::setFullmsg(std::vector<std::string> fullmsg){
 	this->fullmsg = fullmsg;
 };
+
+void Client::setHostnameManual(std::string hostname)
+{
+	this->hostname = hostname;
+}

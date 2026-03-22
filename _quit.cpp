@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _quit.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jvalle-d <jvalle-d@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 14:15:38 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/14 12:56:54 by jvalle-d         ###   ########.fr       */
+/*   Updated: 2026/03/22 16:18:09 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ void Server::parseQuit(Client &client)
 			std::string nick = client.getNick();
 			nextModerator(nick ,this->channels[i]);
 			this->channels[i].removeClient(client);
+
+			checkBotShouldLeave(this->channels[i]);
+
 			if(this->channels[i].getClients().size() == 0)
 				deleteChannel(this->channels[i].getName());
 			else

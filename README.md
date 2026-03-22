@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by jvalle-d, aehrl*
+*This project has been created as part of the 42 curriculum by jvalle-d, aehrl, sbenitez*
 
 # ft_irc — Internet Relay Chat Server
 
