@@ -16,7 +16,7 @@ void Server::parsePart(Client &client)
 {
     try
 	{
-        std::string response = ":" + client.getHostname() + " HAS LEFT ";
+        std::string response = ":" + client.getHostname() + " PART ";
 		std::vector<std::string> fullmsg = client.getFullmsg();
 		std::string reason = "";
 		if(fullmsg.size() < 2 || fullmsg.size() > 3)

@@ -115,6 +115,7 @@ int main(int argc , char **argv) {
 	}
     signal(SIGINT, signalHandler);
     signal(SIGQUIT, signalHandler);
+    signal(SIGTSTP, signalHandler);
     if((std::atoi(argv[1]) <= 0) || (std::atoi(argv[1]) > 65535)){							// ni letas ni negativos
 		std::cerr << "Port was incorrect, please input a valid port number"	<< std::endl;
 		return (1);

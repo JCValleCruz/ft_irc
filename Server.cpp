@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <vector>
 
 template <typename T> void printVector(T &array)
 {
@@ -162,7 +163,7 @@ void Server::parseMessage(Client &client)
 	}
 	if(client.getUserVerified() == false)                 //MODE a secas? comprobar comandos con y sin arguments
 		return;                                                                                   //+limit +invite +topic +key +o=moderator y con el '-'
-	std::string user_commands[9] = {"JOIN", "KICK", "NICK", "PART", "PRIVMSG", "MODE", "TOPIC", "INVITE", "QUIT"};
+	std::string user_commands[9] = {"JOIN", "KICK", "NICK", "PART", "PRIVMSG", "MODE", "TOPIC", "INVITE", "NOTICE"};
 	for(int i = 0; i < 9; i++)                                                // TOPIC #canal? -> le dice el topic a la persona? de todos los canales?
 	{
 		if(fullmsg[0] == user_commands[i])
@@ -194,6 +195,8 @@ void Server::user_switch(int i, Client &client)
 			parseTopic(client);break;
 		case 7:
 			parseInvite(client);break;
+		case 8:
+			parseNotice(client);break;
 	}
 }
 
@@ -232,18 +235,17 @@ void Server::newClient()
 	std::cout << "Client socket " << clisocket << " connected."<< std::endl;
 }
 
-void Server::disconnectClient(Client &clien){
-	Client client = clien;
+void Server::disconnectClient(Client &client){
+	Client aux = client;
 	for(std::vector<struct pollfd>::iterator it = this->polls.begin(); it != this->polls.end(); ++it)
 	{
-		if(client.getSocket() == (*it).fd)
+		if(aux.getSocket() == (*it).fd)
 		{
 			this->polls.erase(it);
-			close(client.getSocket());
+			close(aux.getSocket());
 			break;
 		}
 	}
-
 }
 
 std::string Server::gethostName(){

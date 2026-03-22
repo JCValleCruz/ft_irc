@@ -36,7 +36,7 @@ private:
 	std::string response;
 	int retries;
 	
-	struct hostent* host; 											// Fumada------------------------
+	struct hostent* host;
 	std::string hostname;
 	std::vector<std::string> fullmsg;
 	

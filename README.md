@@ -4,7 +4,7 @@
 
 ## Description
 
-ft_irc is an IRC server implementation written in C++98. The goal is to build a functional IRC server that real IRC clients can connect to and interact with, following the IRC protocol standards.
+ft_irc is an Internet Relay Chat (IRC) server implementation written in C++98. The goal is to build a functional IRC server that real IRC clients can connect to and interact with, following the IRC protocol standards.
 
 The server handles multiple simultaneous clients using non-blocking I/O with `poll()`, and supports the core features of the IRC protocol: authentication, channels, private messaging, and channel operator commands.
 
@@ -21,7 +21,9 @@ The server handles multiple simultaneous clients using non-blocking I/O with `po
 make
 ```
 
-This produces the `ircserv` executable. To clean build files:
+This produces the `ircserv` executable. 
+
+To clean build files:
 
 ```bash
 make clean    # remove object files
@@ -51,6 +53,21 @@ Use any standard IRC client (e.g. HexChat, WeeChat, irssi). Configure it to conn
 - **Server:** `127.0.0.1` (or your machine's IP)
 - **Port:** the port you specified
 - **Password:** the password you specified
+
+### Connecting with the terminal
+
+connect to server:
+
+```bash
+nc <hostname> <port>
+```
+
+set user:
+```bash
+PASS <password>
+NICK <your_nickname>
+USER <your_username> 0 * <your_realname>
+```
 
 ### Supported commands
 

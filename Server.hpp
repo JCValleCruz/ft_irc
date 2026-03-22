@@ -64,10 +64,11 @@ public:
 	void	parsePrivmsg(Client &client);
 	void	parseChangeNick(Client &client);
 	void	parseTopic(Client &client);
+	void	parseNotice(Client &client);
 	int		channelExists(std::string name);
 	Channel	getChannel(std::string chaname);
 	void	deleteChannel(std::string channel);
-	void	disconnectClient(Client &Client);
+	void	disconnectClient(Client &client);
 	void	printVector(std::vector<std::string> vec);
     void	printServer();
 	int		count_char(std::string message, char delim);
