@@ -6,7 +6,11 @@
 /*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2026/03/22 16:15:46 by sbenitez         ###   ########.fr       */
+=======
+/*   Updated: 2026/03/22 17:39:59 by aehrl            ###   ########.fr       */
+>>>>>>> bugfix/quit-RemoveClientFromServer
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +35,43 @@ void Server::parsePart(Client &client)
                 throw ERR_NOSUCHCHANNEL;
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
+<<<<<<< HEAD
 			nextModerator(client.getNick(), this->channels[n]);
 			this->channels[n].removeClient(client);
 
 			checkBotShouldLeave(this->channels[n]);
 
             if(this->channels[n].getClients().size() == 0)
+=======
+			this->channels[i].removeClient(client);
+			if (this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
+				nextModerator(client.getNick(),this->channels[n]);
+			else if (this->channels[n].isAMod(client.getNick()))
+				this->channels[n].removeFromMods(client);
+            if (this->channels[n].getClients().empty())
+>>>>>>> bugfix/quit-RemoveClientFromServer
 				deleteChannel(this->channels[n].getName());
-			else
+			else{
+				std::vector<Client> aux= this->channels[n].getClients();
+				std::string info_msg = ":" + gethostName() + " 353 " + client.getNick() + " = " + channels[n].getName() + " :";
+				std::string client_names = "";
+				for(size_t i = 0; i < aux.size(); i++)
+				{
+					if(this->channels[n].isAMod(aux[i].getNick()))
+						client_names += "@";
+
+					client_names += aux[i].getNick();
+
+					if(i + 1 != aux.size())
+						client_names += " ";
+				}
+				info_msg += client_names;
+				client.setResponse(client.getResponse() + info_msg + "\r\n"); 
+				std::string endofnames = ":" + gethostName() + " 366 " + client.getNick() + " " + channels[n].getName() + " :End of /NAMES list.";
+				client.setResponse(client.getResponse() + endofnames); client.sendResponse();
+
 				this->channels[n].sendResponseChannel(response + this->channels[n].getName() + reason, client, 0);
+			}
         }
 	}
 	catch(ERR num)
