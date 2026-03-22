@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _quit.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 14:15:38 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/21 20:36:54 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/22 16:18:09 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,11 @@ void Server::parseQuit(Client &client)
 		if(this->channels[i].isInChannel(client.getNick()) == 1)
 		{
 			this->channels[i].removeClient(client);
-			if (this->channels[i].getModerators().size() == 1 && this->channels[i].isAMod(client.getNick()))
-				nextModerator(client.getNick(), this->channels[i]);
+
+			checkBotShouldLeave(this->channels[i]);
+
+			if(this->channels[i].getClients().size() == 0)
+				deleteChannel(this->channels[i].getName());
 			else
 				this->channels[i].removeFromMods(client);
 			if(this->channels[i].getClients().empty())

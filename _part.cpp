@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _part.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
+/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-/*   Updated: 2026/03/21 20:41:02 by aehrl            ###   ########.fr       */
+/*   Updated: 2026/03/22 16:15:46 by sbenitez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ void Server::parsePart(Client &client)
                 throw ERR_NOSUCHCHANNEL;
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
-			this->channels[i].removeClient(client);
-			if (this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
-				nextModerator(client.getNick(),this->channels[n]);
-			else
-				this->channels[n].removeFromMods(client);
-            if (this->channels[n].getClients().empty())
+			nextModerator(client.getNick(), this->channels[n]);
+			this->channels[n].removeClient(client);
+
+			checkBotShouldLeave(this->channels[n]);
+
+            if(this->channels[n].getClients().size() == 0)
 				deleteChannel(this->channels[n].getName());
 			else
 				this->channels[n].sendResponseChannel(response + this->channels[n].getName() + reason, client, 0);
