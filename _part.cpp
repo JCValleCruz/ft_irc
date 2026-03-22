@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   _part.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sbenitez <sbenitez@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: aehrl <aehrl@student.42malaga.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 12:50:41 by jormoral          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2026/03/22 16:15:46 by sbenitez         ###   ########.fr       */
-=======
-/*   Updated: 2026/03/22 17:39:59 by aehrl            ###   ########.fr       */
->>>>>>> bugfix/quit-RemoveClientFromServer
+/*   Updated: 2026/03/22 19:33:04 by aehrl            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +31,14 @@ void Server::parsePart(Client &client)
                 throw ERR_NOSUCHCHANNEL;
             if(this->channels[n].clientLevelInChannel(client.getNick()) == 0)
                 throw ERR_NOTONCHANNEL;
-<<<<<<< HEAD
-			nextModerator(client.getNick(), this->channels[n]);
+		
 			this->channels[n].removeClient(client);
-
 			checkBotShouldLeave(this->channels[n]);
-
-            if(this->channels[n].getClients().size() == 0)
-=======
-			this->channels[i].removeClient(client);
-			if (this->channels[n].getModerators().size() == 1 && this->channels[n].isAMod(client.getNick()))
-				nextModerator(client.getNick(),this->channels[n]);
-			else if (this->channels[n].isAMod(client.getNick()))
-				this->channels[n].removeFromMods(client);
-            if (this->channels[n].getClients().empty())
->>>>>>> bugfix/quit-RemoveClientFromServer
+			nextModerator(client.getNick(), this->channels[n]);
+            if (this->channels[n].getClients().size() == 1 &&  this->channels[n].getClients()[0].getNick() == "GabiBot")
 				deleteChannel(this->channels[n].getName());
 			else{
+			
 				std::vector<Client> aux= this->channels[n].getClients();
 				std::string info_msg = ":" + gethostName() + " 353 " + client.getNick() + " = " + channels[n].getName() + " :";
 				std::string client_names = "";
